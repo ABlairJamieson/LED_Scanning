@@ -60,14 +60,53 @@ tpeak_bins, tpeak_counts
 - **Baseline vs signal** windows (`ped_*`, `sig_*`)  
 - **DAQ rate** (`rate_*`): events/s using CAEN timetags  
 
-## 5. Per-Point Summary (`summary.txt`)
-Contains:
-- Amplitude, charge, timing statistics  
-- Median and 99th percentile charge  
-- Acquisition span & rate  
-- LED/gantry direction vectors  
-- Rotation matrix  
-- Scan index ordering  
+# Summary.txt Field Definitions
+
+## File Metadata
+- **Filename** — Original waveform file name.
+- **Output dir** — Directory containing plots and NPZ output for this run.
+- **Total events** — Number of events read from the CAEN file.
+- **Good events** — Number of successfully processed events (should match Total events).
+- **Acq span [s]** — Acquisition time span in seconds (from CAEN timetags, unwrapped).
+- **Runtime [s]** — Same as Acq span (difference between first and last event timestamps).
+
+## Event Rate Statistics
+- **Rate mean [Hz]** — Mean event rate (computed from 1-second bins).
+- **Rate std [Hz]** — Standard deviation of the per-second rate histogram.
+- **Rate SE [Hz]** — Standard error of the mean rate.
+
+## Pulse & Charge Statistics
+- **amp** — Pulse amplitude statistics: baseline − waveform minimum.
+- **charge_vns** — Integrated charge in volt-nanoseconds (over 110–160 ns window).
+- **charge_pc** — Charge converted to picoCoulombs.
+- **charge_pc_median** — Median of the finite charge distribution.
+- **charge_pc_peak** — 99th percentile (“peak”) of the charge distribution.
+- **baseline** — Mean ADC baseline (from first 100 ns of waveform).
+- **t_centroid** — Charge-weighted timing centroid of the pulse.
+- **t_peak** — Time of the waveform minimum.
+
+## Scan Identification
+- **scan_index_0based** — Index of this run among all wave_*.dat files (0-based).
+- **scan_index_1based** — Same, but 1-based.
+
+## Geometry (from filename and rotation)
+- **r_scan [mm]** — Radial distance of gantry scan.
+- **theta_LED [deg]** — LED polar angle (from filename).
+- **phi_LED [deg]** — LED azimuthal angle (from filename).
+- **theta_gantry [deg]** — LED direction expressed in gantry coordinates (polar).
+- **phi_gantry [deg]** — LED direction in gantry coordinates (azimuth).
+
+## Direction Vectors
+- **v_LED** — Unit vector (x, y, z) for LED direction in LED frame.
+- **v_gantry** — Same vector rotated into gantry frame.
+- **normal_LED** — Same as v_LED.
+- **normal_gantry** — Same as v_gantry.
+
+## Rotation Matrix
+- **R_g_to_led_row0** — First row of gantry→LED rotation matrix.
+- **R_g_to_led_row1** — Second row of rotation matrix.
+- **R_g_to_led_row2** — Third row of rotation matrix.
+ng  
 
 ## 6. Lambert Scan Summary (`ScanSummary_Lambert/`)
 ### 6.1 `lambert_slices.npz`
